@@ -1,5 +1,5 @@
 import json
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, make_response, request, send_file
 import boto3
 
 # Configuração do cliente S3 para o LocalStack
@@ -101,7 +101,22 @@ def list_files():
     file_list = [{'filename': obj['Key'], 'metadata': file_metadata.get(obj['Key'], {})}
                  for obj in s3_objects]
 
-    return jsonify(file_list)
+    # Cria uma lista de links de download
+    download_links = [{'filename': file_info['filename'], 'download_link': f"/download/{file_info['filename']}"} 
+                      for file_info in file_list]
+
+    return jsonify(download_links)
+
+@app.route('/download/<filename>', methods=['GET'])
+def download_file(filename):
+    # Recupera o arquivo do S3
+    s3_response = s3.get_object(Bucket=bucket_name, Key=filename)
+    file_content = s3_response['Body'].read()
+
+    # Cria uma resposta Flask e a envia como um anexo para download
+    response = make_response(file_content)
+    response.headers['Content-Disposition'] = f'attachment; filename={filename}'
+    return response
 
 @app.route('/delete_file/<filename>', methods=['DELETE'])
 def delete_file(filename):
