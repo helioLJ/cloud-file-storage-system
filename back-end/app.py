@@ -63,20 +63,21 @@ def upload_file():
     response = lambda_client.invoke(
         FunctionName='print-lambda',
         InvocationType='RequestResponse',  
-        Payload=json.dumps({'filename': file_key})
+        # InvocationType='Event',  
+        Payload=json.dumps({'filename': file.filename})
     )
 
     try:
         # Read the content of the StreamingBody
         payload_content = response['Payload'].read()
+        print(payload_content)
 
         # Attempt to decode the response payload
         response_body = json.loads(payload_content.decode('utf-8'))
-        print(response_body)
 
         # Returning the response from Lambda
         return jsonify({
-            'message': 'Upload bem-sucedido',
+            'message': 'Upload bem-sucedido e função lambda executada',
             'lambda_response': response_body
         }), 200
     except json.JSONDecodeError as e:
