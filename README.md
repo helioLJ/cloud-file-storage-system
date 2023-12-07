@@ -1,6 +1,8 @@
 # Cloud Storage System
 Este projeto é um sistema simples de armazenamento de arquivos na nuvem, desenvolvido utilizando Python no back-end com o framework Flask, React.js no front-end, e serviços da AWS (simulados localmente com o LocalStack) para armazenamento de arquivos (Amazon S3), armazenamento de metadados (Amazon DynamoDB), e processamento assíncrono (Amazon Lambda, opcional).
 
+![Gif](./cloud-app.gif)
+
 # Tecnologias Utilizadas
 ## Back-end:
 - Linguagem: Python
@@ -11,8 +13,7 @@ Este projeto é um sistema simples de armazenamento de arquivos na nuvem, desenv
 - Amazon Lambda (para processamento assíncrono)
 ## Front-end:
 - React.js
-- Axios
-- Dotenv
+- Vite
 ## Funcionalidades do Sistema
 - Upload de Arquivos: Permitir que os usuários realizem o upload de arquivos para a plataforma.
 - Listagem de Arquivos:

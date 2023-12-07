@@ -1,35 +1,50 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from 'react'
+import { FileList } from './components/FileList'
+import { UploadForm } from './components/UploadForm'
 
-function App() {
-  const [count, setCount] = useState(0)
+export function App() {
+  const [files, setFiles] = useState<null | MyFile[]>(null)
+
+  async function listFiles() {
+    return fetch('http://localhost:5000/list_files')
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`)
+        }
+        return response.json()
+      })
+      .then((data) => {
+        console.log('Lista de arquivos:', data)
+        setFiles(data)
+        return data
+      })
+      .catch((error) => {
+        console.error('Erro ao obter a lista de arquivos:', error)
+      })
+  }
+
+  async function handleUploadComplete() {
+    // Atualize a lista de arquivos após o upload
+    await listFiles()
+  }
+
+  useEffect(() => {
+    // Exemplo de uso
+    listFiles()
+  }, [])
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="bg-zinc-800 w-full h-screen text-white flex justify-center items-center">
+      <div className="w-[500px] flex flex-col gap-4">
+        <h1 className="text-center text-4xl font-bold">
+          Cloud File Storage System
+        </h1>
+        <h2 className="text-center mb-6">
+          Python + Flask + S3 + DynamoDB + Lambda Function
+        </h2>
+        <UploadForm onUploadComplete={handleUploadComplete} />
+        <FileList onUploadComplete={handleUploadComplete} files={files} />
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    </div>
   )
 }
-
-export default App

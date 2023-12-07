@@ -1,6 +1,7 @@
 import json
 from flask import Flask, jsonify, make_response, request, send_file
 import boto3
+from flask_cors import CORS  # Importe a extensão CORS
 
 # Configuração do cliente S3 para o LocalStack
 s3 = boto3.client('s3', endpoint_url='http://localhost:4566')
@@ -38,6 +39,7 @@ if metadata_table_name not in [table.name for table in existing_tables]:
     metadata_table.wait_until_exists()
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/')
 def hello_world():
